@@ -3,14 +3,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Harvey's VIP Club Quote</title>
+  <title>Harvey's VIP Club Quote Tool</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 2rem; color: #333; }
     .container { max-width: 800px; margin: auto; background: #fff; padding: 2rem; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
     h1 { color: navy; }
     input, select, button { margin-top: 10px; padding: 10px; width: 100%; max-width: 400px; }
-    .quote-box { background: #eef; padding: 1rem; border-radius: 8px; margin-top: 2rem; }
+    .quote-box { background: #eef; padding: 1rem; border-radius: 8px; margin-top: 2rem; white-space: pre-wrap; }
   </style>
 </head>
 <body>
@@ -19,9 +19,11 @@
 
     <label for="breed">Breed:</label>
     <select id="breed">
-      <option value="Cockapoo|65">Cockapoo</option>
-      <option value="Cocker Spaniel|60">Cocker Spaniel</option>
-      <option value="Labrador|65">Labrador</option>
+      <option value="Cockapoo">Cockapoo</option>
+      <option value="Cocker Spaniel">Cocker Spaniel</option>
+      <option value="Labrador">Labrador</option>
+      <option value="Yorkshire Terrier">Yorkshire Terrier</option>
+      <option value="Jack Russell">Jack Russell</option>
     </select>
 
     <label for="schedule">Grooming Schedule:</label>
@@ -51,35 +53,40 @@
   </div>
 
   <script>
-    let quoteText = '';
+    const basePrices = {
+      "Cockapoo": 65,
+      "Cocker Spaniel": 60,
+      "Labrador": 65,
+      "Yorkshire Terrier": 50,
+      "Jack Russell": 45
+    };
+
+    let quoteText = "";
 
     function calculate() {
-      const [breedName, basePriceStr] = document.getElementById("breed").value.split("|");
-      const basePrice = parseFloat(basePriceStr);
+      const breed = document.getElementById("breed").value;
       const weeks = parseInt(document.getElementById("schedule").value);
+      const base = basePrices[breed] || 0;
       const handstrip = document.getElementById("handstrip").checked ? 20 : 0;
       const teeth = document.getElementById("teeth").checked ? 30 : 0;
       const mudspa = document.getElementById("mudspa").checked ? 15 : 0;
-
-      const totalPerGroom = basePrice + handstrip + teeth + mudspa;
-      const weeklyPrice = totalPerGroom / weeks;
-      const annual = weeklyPrice * 52;
+      const perGroom = base + handstrip + teeth + mudspa;
+      const weekly = perGroom / weeks;
+      const annual = weekly * 52;
       const monthly = (annual / 12).toFixed(2);
 
-      quoteText = `
-Breed: ${breedName}
-Base Groom Price: £${basePrice.toFixed(2)}
+      quoteText = `Breed: ${breed}
+Base Groom Price: £${base.toFixed(2)}
 Handstrip: £${handstrip.toFixed(2)}
 Teeth Clean: £${teeth.toFixed(2)}
 Mud Spa: £${mudspa.toFixed(2)}
-Total Groom Price: £${totalPerGroom.toFixed(2)}
+Total Groom Price: £${perGroom.toFixed(2)}
 Schedule: Every ${weeks} weeks
-Weekly Price: £${weeklyPrice.toFixed(2)} (£${totalPerGroom.toFixed(2)} ÷ ${weeks})
+Weekly Price: £${weekly.toFixed(2)} (£${perGroom.toFixed(2)} ÷ ${weeks})
 Annual Price: £${annual.toFixed(2)} (Weekly × 52)
 Monthly Payment: £${monthly} (Annual ÷ 12)
 
-The customer is happy with their quote.
-`;
+The customer is happy with their quote.`;
 
       document.getElementById("quote").style.display = "block";
       document.getElementById("quote").innerText = quoteText;
@@ -89,8 +96,7 @@ The customer is happy with their quote.
       const dogName = document.getElementById("dogName").value || "My Dog";
       const subject = encodeURIComponent(dogName + " – VIP quote");
       const body = encodeURIComponent(quoteText);
-      const mailtoLink = `mailto:vip@harveys.dog?subject=${subject}&body=${body}`;
-      window.location.href = mailtoLink;
+      window.location.href = `mailto:vip@harveys.dog?subject=${subject}&body=${body}`;
     }
   </script>
 </body>
