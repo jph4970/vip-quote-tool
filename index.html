@@ -117,7 +117,16 @@
 
     <button onclick="calculate()">Get My Quote</button>
 
-    <div class="quote-box" id="quote" style="display:none;"></div>
+    <div class="quote-box" id="quote" style="display:none;">
+    <div id="emailForm" style="display:none; margin-top: 20px;">
+      <h3>Send Your Quote</h3>
+      <label for="dogName">Dog's Name:</label><br>
+      <input type="text" id="dogName" placeholder="e.g. Bella"><br>
+      <label for="ownerEmail">Your Email:</label><br>
+      <input type="email" id="ownerEmail" placeholder="e.g. you@example.com"><br><br>
+      <button onclick="sendEmail()">I'm happy with my quote</button>
+    </div>
+</div>
   </div>
 
   <script>
@@ -163,6 +172,7 @@
       const monthly = (annual / 12).toFixed(2);
 
       document.getElementById("quote").style.display = "block";
+      document.getElementById("emailForm").style.display = "block";
       document.getElementById("quote").innerHTML = `
         <p><strong>Breed:</strong> ${breedName}</p>
         <p><strong>Base Groom Price:</strong> £${basePrice.toFixed(2)}</p>
@@ -176,6 +186,17 @@
         <p><strong>Monthly Payment:</strong> £${monthly} (Annual ÷ 12)</p>
       `;
     }
+  
+function sendEmail() {
+  const dogName = document.getElementById("dogName").value || "My Dog";
+  const userEmail = document.getElementById("ownerEmail").value;
+  const quoteHTML = document.getElementById("quote").innerText;
+  const subject = encodeURIComponent(dogName + " – VIP quote");
+  const body = encodeURIComponent(quoteHTML + "\n\nThe customer is happy with their quote.");
+  const mailtoLink = `mailto:vip@harveys.dog?subject=${subject}&body=${body}`;
+  window.location.href = mailtoLink;
+}
+
   </script>
 </body>
 </html>
